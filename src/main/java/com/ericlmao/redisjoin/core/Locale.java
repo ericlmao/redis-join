@@ -1,6 +1,6 @@
-package com.example.plugin.core;
+package com.ericlmao.redisjoin.core;
 
-import com.example.plugin.PaperPlugin;
+import com.ericlmao.redisjoin.RedisJoinPlugin;
 import games.negative.alumina.logger.Logs;
 import games.negative.alumina.message.Message;
 import net.kyori.adventure.audience.Audience;
@@ -16,7 +16,8 @@ import java.util.Map;
 import java.util.Objects;
 
 public enum Locale {
-
+    PLAYER_JOIN("<dark_gray>[<dark_green>+</dark_green>]</dark_gray> <green>%username%</green> <gray>has joined <yellow>%server%</yellow>.</gray>"),
+    PLAYER_QUIT("<dark_gray>[<dark_red>-</dark_red>]</dark_gray> <red>%username%</red> <gray>has left <yellow>%server%</yellow>.</gray>"),
     ;
 
     private final String content;
@@ -27,7 +28,7 @@ public enum Locale {
         this.message = Message.of(content);
     }
 
-    public static void init(@NotNull PaperPlugin plugin) {
+    public static void init(@NotNull RedisJoinPlugin plugin) {
         File file = new File(plugin.getDataFolder(), "messages.yml");
         validateFile(file);
 

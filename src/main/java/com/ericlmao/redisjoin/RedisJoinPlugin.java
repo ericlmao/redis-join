@@ -1,7 +1,8 @@
-package com.example.plugin;
+package com.ericlmao.redisjoin;
 
-import com.example.plugin.config.Config;
-import com.example.plugin.core.Locale;
+import com.ericlmao.redisjoin.config.Config;
+import com.ericlmao.redisjoin.core.Locale;
+import com.ericlmao.redisjoin.listener.PlayerListener;
 import de.exlll.configlib.NameFormatters;
 import de.exlll.configlib.YamlConfigurationProperties;
 import de.exlll.configlib.YamlConfigurationStore;
@@ -10,12 +11,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 
-public final class PaperPlugin extends AluminaPlugin {
+public final class RedisJoinPlugin extends AluminaPlugin {
 
-    private static PaperPlugin instance;
+    private static RedisJoinPlugin instance;
 
     private Config configuration;
     private YamlConfigurationStore<Config> store;
+
+    private RedisManager redis;
 
     @Override
     public void load() {
@@ -25,6 +28,10 @@ public final class PaperPlugin extends AluminaPlugin {
     @Override
     public void enable() {
         reload();
+
+        this.redis = new RedisManager(configuration);
+
+        registerListener(new PlayerListener());
     }
 
     public void reload() {
@@ -47,7 +54,7 @@ public final class PaperPlugin extends AluminaPlugin {
                     .inputNulls(true).outputNulls(true)
                     .header("""
                         --------------------------------------------------------
-                        Configuration
+                        RedisJoin Configuration
                         \s
                         Useful Resources:
                         - MiniMessage: https://docs.advntr.dev/minimessage/
@@ -74,7 +81,7 @@ public final class PaperPlugin extends AluminaPlugin {
 
     @Override
     public void disable() {
-
+        redis.close();
     }
 
     @NotNull
@@ -82,9 +89,13 @@ public final class PaperPlugin extends AluminaPlugin {
         return configuration;
     }
 
+    @NotNull
+    public RedisManager getRedis() {
+        return redis;
+    }
 
     @NotNull
-    public static PaperPlugin instance() {
+    public static RedisJoinPlugin instance() {
         return instance;
     }
 
@@ -93,4 +104,8 @@ public final class PaperPlugin extends AluminaPlugin {
         return instance().getConfiguration();
     }
 
+    @NotNull
+    public static RedisManager redis() {
+        return instance().getRedis();
+    }
 }

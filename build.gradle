@@ -3,9 +3,9 @@ plugins {
     id "io.github.goooler.shadow" version "8.1.7"
 }
 
-def id = "PaperPlugin"
-def group = 'com.example.plugin'
-def version = '1.0-SNAPSHOT'
+def id = "RedisJoin"
+def group = 'com.ericlmao.redisjoin'
+def version = '1.0.0'
 
 repositories {
     mavenLocal()
@@ -19,7 +19,6 @@ repositories {
         url = "https://oss.sonatype.org/content/groups/public/"
     }
 
-    maven { url = "https://repo.negative.games/repository/maven-releases/" }
 }
 
 dependencies {
@@ -31,9 +30,12 @@ dependencies {
     // ConfigLib
     implementation("de.exlll:configlib-yaml:4.5.0")
 
+    // https://mvnrepository.com/artifact/redis.clients/jedis
+    implementation("redis.clients:jedis:5.2.0")
+
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.32")
-    annotationProcessor("org.projectlombok:lombok:1.18.32")
+    compileOnly('org.projectlombok:lombok:1.18.34')
+    annotationProcessor('org.projectlombok:lombok:1.18.34')
 }
 
 def targetJavaVersion = 21
@@ -83,4 +85,6 @@ shadowJar {
 
     relocate "games.negative.alumina", "${group}.libs.alumina"
     relocate "de.exlll.configlib", "${group}.libs.config"
+    relocate "redis.clients.jedis", "${group}.libs.jedis"
+
 }

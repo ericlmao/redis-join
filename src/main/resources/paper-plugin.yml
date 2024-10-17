@@ -1,6 +1,6 @@
-name: PaperPlugin
+name: RedisJoin
 version: '${version}'
-main: com.example.plugin.PaperPlugin
+main: com.ericlmao.redisjoin.RedisJoinPlugin
 api-version: '1.21'
 authors: ["ericlmao"]
 dependencies:

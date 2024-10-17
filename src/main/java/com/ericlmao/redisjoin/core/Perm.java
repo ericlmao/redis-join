@@ -1,4 +1,4 @@
-package com.example.plugin.core;
+package com.ericlmao.redisjoin.core;
 
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
