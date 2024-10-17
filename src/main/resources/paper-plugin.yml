@@ -1,0 +1,10 @@
+name: PaperPlugin
+version: '${version}'
+main: com.example.plugin.PaperPlugin
+api-version: '1.21'
+authors: ["ericlmao"]
+dependencies:
+  server:
+    PlaceholderAPI:
+      load: AFTER
+      required: false
