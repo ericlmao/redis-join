@@ -1,5 +1,6 @@
 package com.ericlmao.redisjoin;
 
+import com.ericlmao.redisjoin.command.CommandMetaData;
 import com.ericlmao.redisjoin.config.Config;
 import com.ericlmao.redisjoin.core.Locale;
 import com.ericlmao.redisjoin.listener.PlayerListener;
@@ -32,6 +33,8 @@ public final class RedisJoinPlugin extends AluminaPlugin {
         this.redis = new RedisManager(configuration);
 
         registerListener(new PlayerListener());
+
+        registerCommand(new CommandMetaData());
     }
 
     public void reload() {

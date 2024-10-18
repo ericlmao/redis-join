@@ -15,6 +15,8 @@ import lombok.RequiredArgsConstructor;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 import redis.clients.jedis.JedisPubSub;
 
 import java.util.Map;
@@ -23,18 +25,15 @@ public class RedisManager {
 
     private static final Gson gson = new GsonBuilder().serializeNulls().create();
 
-    private final Jedis subscriber;
-    private final Jedis publisher;
+    private final JedisPool pool;
     private final Map<String, Class<? extends RedisPacket>> byChannel;
     private final Map<Class<? extends RedisPacket>, String> byClass;
 
     public RedisManager(@NotNull Config config) {
-        this.subscriber = new Jedis(config.getRedisHost(), config.getRedisPort());
-        String auth = this.subscriber.auth(config.getRedisPassword());
+        JedisPoolConfig poolConfig = new JedisPoolConfig();
+        poolConfig.setMaxTotal(32);
 
-        this.publisher = new Jedis(config.getRedisHost(), config.getRedisPort());
-        this.publisher.auth(config.getRedisPassword());
-        Logs.log("connection auth code: " + auth, true);
+        this.pool = new JedisPool(poolConfig, config.getRedisHost(), config.getRedisPort(), 5000, config.getRedisPassword());
 
         Logs.log("Connected to Redis server at " + config.getRedisHost() + ":" + config.getRedisPort(), true);
 
@@ -57,12 +56,17 @@ public class RedisManager {
 
         Logs.info("Sending packet to channel " + channel + ": " + json, true);
 
-        publisher.publish(channel, json);
+        runCommand(jedis -> jedis.publish(channel, json));
+    }
+
+    public <T> T runCommand(JedisCommand<T> command) {
+        try (Jedis jedis = pool.getResource()) {
+            return command.run(jedis);
+        }
     }
 
     public void close() {
-        subscriber.close();
-        publisher.close();
+        pool.close();
     }
 
     @RequiredArgsConstructor
@@ -104,7 +108,10 @@ public class RedisManager {
                 }
             };
 
-            subscriber.subscribe(pubSub, channel);
+            runCommand(jedis -> {
+                jedis.subscribe(pubSub, channel);
+                return null;
+            });
         }
     }
 
